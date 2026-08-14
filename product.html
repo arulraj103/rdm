@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Title updated dynamically by product.js -->
+  <title>Product | StyleHaus</title>
+  <meta name="description" content="View product details at StyleHaus." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ─── Design Tokens (matches categories.html) ───────────────────── */
+    :root {
+      --clr-ink:        #1a1a1a;
+      --clr-ink-mid:    #4a4a4a;
+      --clr-ink-soft:   #7a7a7a;
+      --clr-surface:    #f8f7f5;
+      --clr-white:      #ffffff;
+      --clr-accent:     #2c2c2c;
+      --clr-accent-alt: #c8a96e;
+      --clr-border:     #e4e2de;
+      --clr-card-bg:    #ffffff;
+      --clr-success:    #3a7d44;
+      --clr-danger:     #b94040;
+
+      --ff-display: 'Georgia', 'Times New Roman', serif;
+      --ff-body:    'Helvetica Neue', 'Arial', sans-serif;
+
+      --fs-xs:   0.75rem;
+      --fs-sm:   0.875rem;
+      --fs-base: 1rem;
+      --fs-md:   1.125rem;
+      --fs-lg:   1.5rem;
+      --fs-xl:   2rem;
+      --fs-2xl:  2.75rem;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+
+      --shadow-card: 0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-hover: 0 8px 28px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.07);
+
+      --transition: 0.22s ease;
+    }
+
+    /* ─── Reset / Base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--ff-body);
+      font-size: var(--fs-base);
+      color: var(--clr-ink);
+      background: var(--clr-surface);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ─── Header / Navbar ───────────────────────────────────────────── */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--clr-white);
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .navbar {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 64px;
+    }
+    .nav-logo a {
+      font-family: var(--ff-display);
+      font-size: var(--fs-lg);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--clr-ink);
+    }
+    .nav-logo span { color: var(--clr-accent-alt); }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      font-size: var(--fs-sm); font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--clr-ink-mid);
+      transition: color var(--transition);
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-links a:hover { color: var(--clr-ink); border-bottom-color: var(--clr-accent-alt); }
+    .nav-links a:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; border-radius: 2px; }
+
+    .nav-toggle {
+      display: none; background: none; border: none;
+      padding: 8px; margin-right: -8px; color: var(--clr-ink);
+    }
+    .nav-toggle:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; border-radius: var(--radius-sm); }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; width: 22px; }
+    .hamburger span {
+      display: block; height: 2px; background: var(--clr-ink);
+      border-radius: 2px;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+    .nav-toggle[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile {
+      display: none; background: var(--clr-white);
+      border-top: 1px solid var(--clr-border);
+      padding: 20px 24px 28px;
+    }
+    .nav-mobile.is-open { display: block; }
+    .nav-mobile a {
+      display: block; padding: 12px 0;
+      font-size: var(--fs-base); font-weight: 500;
+      color: var(--clr-ink-mid);
+      border-bottom: 1px solid var(--clr-border);
+      transition: color var(--transition);
+    }
+    .nav-mobile a:last-child { border-bottom: none; }
+    .nav-mobile a:hover { color: var(--clr-ink); }
+    .nav-mobile a:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+
+    /* ─── Breadcrumb ────────────────────────────────────────────────── */
+    .breadcrumb-bar { background: var(--clr-white); border-bottom: 1px solid var(--clr-border); }
+    .breadcrumb {
+      max-width: 1280px; margin: 0 auto;
+      padding: 12px 24px;
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+      font-size: var(--fs-xs);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--clr-ink-soft);
+    }
+    .breadcrumb a { color: var(--clr-ink-soft); transition: color var(--transition); }
+    .breadcrumb a:hover { color: var(--clr-accent-alt); }
+    .breadcrumb a:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 2px; border-radius: 2px; }
+    .breadcrumb-sep { color: var(--clr-border); }
+    #breadcrumb-category-link { color: var(--clr-ink-soft); }
+    #breadcrumb-product { color: var(--clr-ink); font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ─── Main Layout ───────────────────────────────────────────────── */
+    .page-main { max-width: 1280px; margin: 0 auto; padding: 40px 24px 72px; }
+
+    /* ─── Loading State ─────────────────────────────────────────────── */
+    .product-loading {
+      text-align: center; padding: 100px 24px;
+    }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--clr-border);
+      border-top-color: var(--clr-accent-alt);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: var(--fs-sm); color: var(--clr-ink-soft);
+      letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;
+    }
+
+    /* ─── State Panel (not found / no ID) ───────────────────────────── */
+    .state-panel {
+      text-align: center; padding: 80px 24px;
+      max-width: 480px; margin: 0 auto;
+    }
+    .state-icon { font-size: 3rem; margin-bottom: 20px; line-height: 1; }
+    .state-title {
+      font-family: var(--ff-display); font-size: var(--fs-xl);
+      font-weight: 700; color: var(--clr-ink); margin-bottom: 12px;
+    }
+    .state-desc {
+      font-size: var(--fs-sm); color: var(--clr-ink-mid);
+      line-height: 1.7; margin-bottom: 28px;
+    }
+    .btn-primary {
+      display: inline-block; padding: 13px 32px;
+      background: var(--clr-ink); color: var(--clr-white);
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      border-radius: var(--radius-sm); border: 2px solid var(--clr-ink);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-primary:hover { background: var(--clr-accent-alt); border-color: var(--clr-accent-alt); }
+    .btn-primary:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+
+    /* ─── Back Link ─────────────────────────────────────────────────── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: var(--fs-xs);
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clr-ink-soft);
+      margin-bottom: 28px;
+      transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--clr-accent-alt); }
+    .back-link:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; border-radius: 2px; }
+    .back-link svg { transition: transform var(--transition); }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* ─── Product Detail Grid ───────────────────────────────────────── */
+    .product-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    /* ─── Image Gallery ─────────────────────────────────────────────── */
+    .gallery-col {}
+    .gallery-main-wrap {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      background: #f0ede8;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .gallery-main-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: opacity 0.25s ease;
+    }
+    .gallery-main-img.is-fading { opacity: 0; }
+
+    /* Zoom hint */
+    .gallery-zoom-hint {
+      position: absolute; bottom: 12px; right: 12px;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: var(--fs-xs);
+      padding: 5px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .gallery-main-wrap:hover .gallery-zoom-hint { opacity: 1; }
+
+    .gallery-thumbs {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .thumb-btn {
+      width: 72px; height: 96px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 2px solid transparent;
+      background: #f0ede8;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .thumb-btn img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .thumb-btn:hover { border-color: var(--clr-ink-mid); }
+    .thumb-btn.is-active { border-color: var(--clr-accent-alt); box-shadow: 0 0 0 2px rgba(200,169,110,0.3); }
+    .thumb-btn:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 3px; }
+
+    /* ─── Product Info Column ───────────────────────────────────────── */
+    .info-col {}
+
+    .product-eyebrow {
+      font-size: var(--fs-xs); letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 700;
+      color: var(--clr-accent-alt); margin-bottom: 10px;
+    }
+    #product-category-label { color: var(--clr-accent-alt); }
+
+    .product-name {
+      font-family: var(--ff-display);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 700; line-height: 1.15;
+      color: var(--clr-ink);
+      margin-bottom: 18px;
+    }
+
+    .product-price-row {
+      display: flex; align-items: baseline; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .product-price {
+      font-family: var(--ff-display);
+      font-size: var(--fs-2xl);
+      font-weight: 700; color: var(--clr-ink);
+      letter-spacing: -0.02em;
+    }
+    .product-price sup { font-size: 0.55em; vertical-align: super; }
+
+    .product-availability {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+    }
+    .product-availability.avail-instock {
+      background: rgba(58,125,68,0.1); color: var(--clr-success);
+    }
+    .product-availability.avail-outstock {
+      background: rgba(185,64,64,0.1); color: var(--clr-danger);
+    }
+    .avail-dot {
+      width: 6px; height: 6px; border-radius: 50; border-radius: 50%; flex-shrink: 0;
+    }
+    .avail-instock  .avail-dot { background: var(--clr-success); }
+    .avail-outstock .avail-dot { background: var(--clr-danger); }
+
+    .info-divider {
+      border: none; border-top: 1px solid var(--clr-border);
+      margin: 22px 0;
+    }
+
+    /* Description */
+    .info-section-title {
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--clr-ink-soft); margin-bottom: 10px;
+    }
+    .product-description {
+      font-size: var(--fs-sm); color: var(--clr-ink-mid);
+      line-height: 1.75;
+    }
+
+    /* Size selection */
+    .size-options {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
+    }
+    .size-btn {
+      min-width: 44px; padding: 8px 14px;
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      background: var(--clr-white);
+      font-size: var(--fs-sm); font-weight: 600;
+      color: var(--clr-ink-mid);
+      transition: border-color var(--transition), background var(--transition), color var(--transition);
+    }
+    .size-btn:hover:not(:disabled) {
+      border-color: var(--clr-ink);
+      color: var(--clr-ink);
+    }
+    .size-btn.is-selected {
+      border-color: var(--clr-ink);
+      background: var(--clr-ink);
+      color: var(--clr-white);
+    }
+    .size-btn:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 3px; }
+    .size-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Color selection */
+    .color-options {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
+    }
+    .color-btn {
+      padding: 7px 18px;
+      border: 1.5px solid var(--clr-border);
+      border-radius: 100px;
+      background: var(--clr-white);
+      font-size: var(--fs-sm); font-weight: 600;
+      color: var(--clr-ink-mid);
+      display: flex; align-items: center; gap: 7px;
+      transition: border-color var(--transition), background var(--transition), color var(--transition);
+    }
+    .color-btn:hover {
+      border-color: var(--clr-ink);
+      color: var(--clr-ink);
+    }
+    .color-btn.is-selected {
+      border-color: var(--clr-accent-alt);
+      background: rgba(200,169,110,0.08);
+      color: var(--clr-ink);
+    }
+    .color-btn:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 3px; }
+    .color-swatch {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    /* CTAs */
+    .product-actions { display: flex; flex-direction: column; gap: 12px; }
+    .btn-whatsapp {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 16px 28px;
+      background: #25d366; color: #fff;
+      font-size: var(--fs-sm); font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: var(--radius-sm);
+      border: 2px solid #25d366;
+      transition: background var(--transition), border-color var(--transition);
+      text-decoration: none;
+    }
+    .btn-whatsapp:hover { background: #1da851; border-color: #1da851; }
+    .btn-whatsapp:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+
+    .btn-call {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 28px;
+      background: transparent; color: var(--clr-ink);
+      font-size: var(--fs-sm); font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--clr-ink);
+      transition: background var(--transition), color var(--transition);
+      text-decoration: none;
+    }
+    .btn-call:hover { background: var(--clr-ink); color: var(--clr-white); }
+    .btn-call:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+
+    /* Enquiry note */
+    .enquiry-note {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-top: 4px;
+    }
+    .enquiry-note-title {
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clr-ink); margin-bottom: 6px;
+    }
+    .enquiry-note-text {
+      font-size: var(--fs-xs); color: var(--clr-ink-mid); line-height: 1.6;
+    }
+
+    /* ─── Spec Table ────────────────────────────────────────────────── */
+    .spec-section { margin-top: 56px; }
+    .spec-section-title {
+      font-family: var(--ff-display); font-size: var(--fs-lg);
+      font-weight: 700; color: var(--clr-ink); margin-bottom: 20px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--clr-border);
+    }
+    .spec-table { width: 100%; border-collapse: collapse; }
+    .spec-table tr { border-bottom: 1px solid var(--clr-border); }
+    .spec-table tr:last-child { border-bottom: none; }
+    .spec-table th, .spec-table td {
+      padding: 12px 0; text-align: left; vertical-align: top;
+    }
+    .spec-table th {
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clr-ink-soft);
+      width: 160px; padding-right: 24px;
+    }
+    .spec-table td { font-size: var(--fs-sm); color: var(--clr-ink-mid); }
+
+    /* ─── Related Products ──────────────────────────────────────────── */
+    .related-section { margin-top: 80px; }
+    .related-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--clr-border);
+    }
+    .related-title {
+      font-family: var(--ff-display); font-size: var(--fs-xl);
+      font-weight: 700; color: var(--clr-ink);
+    }
+    .related-browse-link {
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clr-accent-alt);
+      transition: color var(--transition);
+    }
+    .related-browse-link:hover { color: var(--clr-ink); }
+    .related-browse-link:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    /* Product card (same as categories.html) */
+    .product-card {
+      background: var(--clr-card-bg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition), box-shadow var(--transition);
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .card-image-wrap {
+      position: relative; aspect-ratio: 3 / 4;
+      overflow: hidden; background: #f0ede8;
+    }
+    .card-image-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+    .product-card:hover .card-image-wrap img { transform: scale(1.04); }
+    .card-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--clr-accent-alt); color: var(--clr-white);
+      font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: var(--radius-sm);
+    }
+    .card-body {
+      padding: 16px 16px 18px;
+      display: flex; flex-direction: column; flex: 1;
+    }
+    .card-category {
+      font-size: var(--fs-xs); letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--clr-accent-alt);
+      font-weight: 600; margin-bottom: 5px;
+    }
+    .card-name {
+      font-family: var(--ff-display); font-size: 1rem;
+      font-weight: 700; color: var(--clr-ink); line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .card-price {
+      font-size: var(--fs-md); font-weight: 700;
+      color: var(--clr-ink); margin-bottom: 14px; flex: 1;
+    }
+    .card-price sup { font-size: 0.6em; vertical-align: super; }
+    .btn-view-details {
+      display: block; width: 100%; padding: 11px;
+      background: var(--clr-ink); color: var(--clr-white);
+      text-align: center; font-size: var(--fs-xs); font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      border: 2px solid var(--clr-ink); border-radius: var(--radius-sm);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-view-details:hover { background: var(--clr-accent-alt); border-color: var(--clr-accent-alt); }
+    .btn-view-details:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 3px; }
+
+    /* No related products */
+    .related-empty {
+      font-size: var(--fs-sm); color: var(--clr-ink-soft);
+      padding: 40px 0; text-align: center;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────────── */
+    .site-footer { background: var(--clr-ink); color: rgba(255,255,255,0.65); margin-top: 80px; }
+    .footer-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 64px 24px 32px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-logo {
+      font-family: var(--ff-display); font-size: var(--fs-lg);
+      font-weight: 700; color: var(--clr-white); letter-spacing: 0.04em; margin-bottom: 14px;
+    }
+    .footer-logo span { color: var(--clr-accent-alt); }
+    .footer-brand-desc { font-size: var(--fs-sm); line-height: 1.7; max-width: 260px; }
+    .footer-col-title {
+      font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--clr-white); margin-bottom: 18px;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: var(--fs-sm); color: rgba(255,255,255,0.6); transition: color var(--transition); }
+    .footer-links a:hover { color: var(--clr-accent-alt); }
+    .footer-links a:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+    .footer-contact-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .footer-contact-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
+    .footer-contact-text { font-size: var(--fs-sm); color: rgba(255,255,255,0.6); }
+    .footer-social-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-social-links a { font-size: var(--fs-sm); color: rgba(255,255,255,0.6); transition: color var(--transition); }
+    .footer-social-links a:hover { color: var(--clr-accent-alt); }
+    .footer-social-links a:focus-visible { outline: 2px solid var(--clr-accent-alt); outline-offset: 4px; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      max-width: 1280px; margin: 0 auto;
+      padding: 24px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      font-size: var(--fs-xs); color: rgba(255,255,255,0.4);
+    }
+
+    /* ─── Responsive ────────────────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .related-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .product-detail { grid-template-columns: 1fr; gap: 36px; }
+      .gallery-main-wrap { aspect-ratio: 4 / 3; max-height: 460px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: block; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
+    @media (max-width: 560px) {
+      .related-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @media (max-width: 400px) {
+      .related-grid { grid-template-columns: 1fr; max-width: 320px; }
+      .product-actions { gap: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HEADER / NAVBAR
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="site-header" role="banner">
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="nav-logo">
+        <a href="index.html" aria-label="StyleHaus – Home">Style<span>Haus</span></a>
+      </div>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="categories.html">Categories</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button
+        class="nav-toggle" id="nav-toggle"
+        aria-expanded="false" aria-controls="nav-mobile"
+        aria-label="Open navigation menu"
+      >
+        <span class="hamburger" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </nav>
+    <div class="nav-mobile" id="nav-mobile" role="navigation" aria-label="Mobile navigation">
+      <a href="index.html">Home</a>
+      <a href="categories.html">Categories</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BREADCRUMB
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="breadcrumb-bar" aria-label="Breadcrumb">
+    <nav class="breadcrumb" aria-label="Breadcrumb navigation">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <a href="categories.html">Categories</a>
+      <span class="breadcrumb-sep" aria-hidden="true" id="breadcrumb-sep-cat">/</span>
+      <!-- href populated dynamically: categories.html?category=SLUG -->
+      <a href="categories.html" id="breadcrumb-category-link" aria-label="Back to category">Category</a>
+      <span class="breadcrumb-sep" aria-hidden="true" id="breadcrumb-sep-prod">/</span>
+      <span id="breadcrumb-product" aria-current="page">Product</span>
+    </nav>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════════════════════ -->
+  <main class="page-main" id="main-content" role="main">
+
+
+    <!-- ── Loading State ──────────────────────────────────────── -->
+    <div class="product-loading" id="product-loading" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p class="loading-text">Loading product…</p>
+    </div>
+
+
+    <!-- ── Product Not Found State ────────────────────────────── -->
+    <div class="state-panel" id="state-not-found" style="display:none;" role="alert">
+      <div class="state-icon" aria-hidden="true">🔍</div>
+      <h1 class="state-title">Product Not Found</h1>
+      <p class="state-desc" id="state-not-found-desc">
+        Sorry, we couldn't find the product you're looking for.
+      </p>
+      <a href="categories.html" class="btn-primary">Browse Categories</a>
+    </div>
+
+
+    <!-- ── Product Detail (populated by product.js) ───────────── -->
+    <div id="product-detail-wrap" style="display:none;">
+
+      <!-- Back link -->
+      <!--
+        product.js sets:
+          href="categories.html?category=SLUG"
+          text="← Back to [Category] Collection"
+      -->
+      <a class="back-link" id="back-to-category" href="categories.html" aria-label="Back to category">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="back-link-text">Back to Collection</span>
+      </a>
+
+      <!-- Two-column product detail grid -->
+      <section class="product-detail" aria-labelledby="product-name">
+
+        <!-- LEFT: Image Gallery -->
+        <div class="gallery-col" aria-label="Product images">
+
+          <!-- Main image -->
+          <div class="gallery-main-wrap">
+            <!--
+              product.js sets:
+                src="assets/images/products/FILENAME"
+                alt="PRODUCT NAME"
+            -->
+            <img
+              class="gallery-main-img"
+              id="gallery-main-img"
+              src=""
+              alt=""
+              width="600"
+              height="800"
+            />
+            <span class="gallery-zoom-hint" aria-hidden="true">Tap to zoom</span>
+          </div>
+
+          <!-- Thumbnails -->
+          <!--
+            product.js renders thumbnail buttons here.
+            Each button:
+            <button
+              class="thumb-btn [is-active]"
+              data-index="N"
+              aria-label="View image N of PRODUCT NAME"
+              aria-pressed="true|false"
+            >
+              <img src="assets/images/products/FILENAME" alt="" loading="lazy" />
+            </button>
+          -->
+          <div class="gallery-thumbs" id="gallery-thumbs" role="list" aria-label="Product image thumbnails"></div>
+        </div>
+
+
+        <!-- RIGHT: Product Information -->
+        <div class="info-col">
+
+          <!-- Category eyebrow -->
+          <div class="product-eyebrow" id="product-eyebrow">
+            <span id="product-category-label">Category</span>
+          </div>
+
+          <!-- Product Name (main H1) -->
+          <h1 class="product-name" id="product-name">Loading…</h1>
+
+          <!-- Price + Availability -->
+          <div class="product-price-row">
+            <div class="product-price" id="product-price" aria-label="Price">
+              <sup>₹</sup><span id="product-price-value">—</span>
+            </div>
+            <!--
+              product.js sets class: avail-instock | avail-outstock
+              and updates inner text.
+            -->
+            <div class="product-availability avail-instock" id="product-availability" role="status">
+              <span class="avail-dot" aria-hidden="true"></span>
+              <span id="product-availability-text">In Stock</span>
+            </div>
+          </div>
+
+          <hr class="info-divider" />
+
+          <!-- Short Description -->
+          <div id="product-description-section">
+            <div class="info-section-title">About This Product</div>
+            <p class="product-description" id="product-description">—</p>
+          </div>
+
+          <hr class="info-divider" />
+
+          <!-- Size Selection -->
+          <!--
+            product.js shows/hides this section based on data.
+            It renders <button class="size-btn"> for each size.
+            Selected size gets class "is-selected" and aria-pressed="true".
+          -->
+          <div id="size-section" style="display:none;" aria-labelledby="size-section-label">
+            <div class="info-section-title" id="size-section-label">Select Size</div>
+            <div class="size-options" id="size-options" role="group" aria-label="Available sizes"></div>
+          </div>
+
+          <!-- Color Selection -->
+          <!--
+            product.js shows/hides this section based on data.
+            It renders <button class="color-btn"> for each color.
+            Selected color gets class "is-selected" and aria-pressed="true".
+          -->
+          <div id="color-section" style="display:none;" aria-labelledby="color-section-label">
+            <hr class="info-divider" />
+            <div class="info-section-title" id="color-section-label">Select Color</div>
+            <div class="color-options" id="color-options" role="group" aria-label="Available colors"></div>
+          </div>
+
+          <hr class="info-divider" />
+
+          <!-- Actions -->
+          <div class="product-actions">
+
+            <!--
+              product.js updates href dynamically:
+              https://wa.me/91XXXXXXXXXX?text=ENCODED_MESSAGE
+
+              Message format:
+              "Hi, I'm interested in [Product Name] (₹[Price]).
+              Size: [Selected Size]
+              Color: [Selected Color]
+              Is this available?"
+            -->
+            <a
+              class="btn-whatsapp"
+              id="btn-whatsapp"
+              href="https://wa.me/91XXXXXXXXXX"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Enquire via WhatsApp (opens WhatsApp)"
+            >
+              <!-- WhatsApp icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.534 5.86L.057 23.428a.5.5 0 0 0 .515.572l5.763-1.512A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.795 9.795 0 0 1-5.152-1.46l-.37-.22-3.425.898.916-3.338-.24-.384A9.764 9.764 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/>
+              </svg>
+              WhatsApp Enquiry
+            </a>
+
+            <!--
+              product.js updates href: tel:+91XXXXXXXXXX
+              REPLACE with actual store phone number.
+            -->
+            <a
+              class="btn-call"
+              id="btn-call"
+              href="tel:+91XXXXXXXXXX"
+              aria-label="Call the store"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.73a16 16 0 0 0 5.5 5.5l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Call Store
+            </a>
+
+          </div><!-- /product-actions -->
+
+          <!-- Enquiry Note -->
+          <div class="enquiry-note" role="note">
+            <div class="enquiry-note-title">Interested in this product?</div>
+            <p class="enquiry-note-text">
+              Contact us on WhatsApp or call the store to confirm availability,
+              sizes, and colors. We're happy to help.
+            </p>
+          </div>
+
+        </div><!-- /info-col -->
+      </section><!-- /product-detail -->
+
+
+      <!-- ── Product Specifications ──────────────────────────── -->
+      <!--
+        product.js populates the <tbody> with <tr> rows.
+        Row format:
+        <tr>
+          <th scope="row">Material</th>
+          <td>100% Cotton</td>
+        </tr>
+
+        Only fields present in the product data should be rendered.
+        Hide the entire section if no specs are available.
+      -->
+      <section class="spec-section" id="spec-section" aria-labelledby="spec-section-title" style="display:none;">
+        <h2 class="spec-section-title" id="spec-section-title">Product Details</h2>
+        <table class="spec-table" aria-label="Product specifications">
+          <tbody id="spec-tbody"></tbody>
+        </table>
+      </section>
+
+
+      <!-- ── Related Products ────────────────────────────────── -->
+      <!--
+        product.js:
+          - Filters products from same category, excluding current product
+          - Renders up to 4 <article class="product-card"> elements
+          - Updates #related-browse-link href to categories.html?category=SLUG
+          - If no related products exist, shows .related-empty message
+      -->
+      <section class="related-section" id="related-section" aria-labelledby="related-title">
+        <div class="related-header">
+          <h2 class="related-title" id="related-title">You May Also Like</h2>
+          <a class="related-browse-link" id="related-browse-link" href="categories.html">
+            View All →
+          </a>
+        </div>
+        <!--
+          Card structure (injected by product.js):
+          <article class="product-card">
+            <div class="card-image-wrap">
+              [optional] <div class="card-badge">Featured</div>
+              <img src="assets/images/products/FILENAME" alt="PRODUCT NAME" loading="lazy" />
+            </div>
+            <div class="card-body">
+              <div class="card-category">CATEGORY</div>
+              <h3 class="card-name">PRODUCT NAME</h3>
+              <div class="card-price"><sup>₹</sup>PRICE</div>
+              <a class="btn-view-details" href="product.html?id=PRODUCT_ID">View Details</a>
+            </div>
+          </article>
+        -->
+        <div class="related-grid" id="related-grid" role="list" aria-label="Related products"></div>
+      </section>
+
+    </div><!-- /product-detail-wrap -->
+
+  </main><!-- /main -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Style<span>Haus</span></div>
+        <p class="footer-brand-desc">
+          Quality clothing and modern styles at affordable prices.
+          Fashion for every occasion, every season.
+        </p>
+      </div>
+      <div>
+        <h3 class="footer-col-title">Quick Links</h3>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <a href="index.html">Home</a>
+          <a href="categories.html">Categories</a>
+          <a href="index.html#about">About</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+      </div>
+      <div>
+        <h3 class="footer-col-title">Contact</h3>
+        <div class="footer-contact-row">
+          <span class="footer-contact-icon" aria-hidden="true">📞</span>
+          <a class="footer-contact-text" href="tel:+91XXXXXXXXXX" aria-label="Call us">+91 XXXXX XXXXX</a>
+        </div>
+        <div class="footer-contact-row">
+          <span class="footer-contact-icon" aria-hidden="true">💬</span>
+          <a class="footer-contact-text" href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp us">WhatsApp</a>
+        </div>
+        <div class="footer-contact-row">
+          <span class="footer-contact-icon" aria-hidden="true">📍</span>
+          <span class="footer-contact-text">123 Fashion Street,<br>Your City – 600001</span>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-col-title">Follow Us</h3>
+        <div class="footer-social-links">
+          <a href="https://instagram.com/YOURHANDLE" target="_blank" rel="noopener noreferrer" aria-label="Instagram (opens new tab)">📸 Instagram</a>
+          <a href="https://facebook.com/YOURPAGE"    target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens new tab)">👍 Facebook</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 StyleHaus. All rights reserved.</span>
+      <span>Crafted with ♥ for fashion lovers.</span>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════════════════════ -->
+  <script src="js/data.js"></script>
+  <script src="js/product.js" defer></script>
+
+  <!-- ── Inline: navbar toggle only ────────────────────────────── -->
+  <script>
+    (function () {
+      const toggle    = document.getElementById('nav-toggle');
+      const mobileNav = document.getElementById('nav-mobile');
+      if (!toggle || !mobileNav) return;
+
+      toggle.addEventListener('click', function () {
+        const isOpen = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', String(!isOpen));
+        this.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+        mobileNav.classList.toggle('is-open', !isOpen);
+      });
+      document.addEventListener('click', function (e) {
+        if (!toggle.contains(e.target) && !mobileNav.contains(e.target)) {
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          mobileNav.classList.remove('is-open');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Open navigation menu');
+          mobileNav.classList.remove('is-open');
+          toggle.focus();
+        }
+      });
+    }());
+  </script>
+
+  <!--
+  ═══════════════════════════════════════════════════════════════
+  PRODUCT.JS CONTRACT
+  ═══════════════════════════════════════════════════════════════
+
+  product.js is responsible for ALL dynamic rendering.
+
+  ── STEP 1: Read ID ─────────────────────────────────────────
+  const params    = new URLSearchParams(window.location.search);
+  const productId = params.get('id');   // e.g. "p001"
+
+  ── STEP 2: Find product in data.js ─────────────────────────
+  const product = window.storeProducts.find(p => p.id === productId);
+  // If not found (or no id): show #state-not-found, hide loader
+
+  ── STEP 3: Show/hide panels ────────────────────────────────
+  Hide:  #product-loading
+  Show:  #product-detail-wrap  (or #state-not-found on error)
+
+  ── STEP 4: Page metadata ───────────────────────────────────
+  document.title = `${product.name} | StyleHaus`;
+  document.querySelector('meta[name="description"]').content = product.description;
+
+  ── STEP 5: Breadcrumb ──────────────────────────────────────
+  #breadcrumb-category-link  → href="categories.html?category={product.category}"
+                               text = display name of category (e.g. "Polo")
+  #breadcrumb-product        → text = product.name (truncated if long)
+
+  ── STEP 6: Back link ───────────────────────────────────────
+  #back-to-category          → href="categories.html?category={product.category}"
+  #back-link-text            → "Back to Polo Collection"
+
+  ── STEP 7: Product info ────────────────────────────────────
+  #product-category-label    → display name of category
+  #product-name              → product.name
+  #product-price-value       → product.price  (formatted, e.g. "250")
+  #product-availability      → toggle classes: avail-instock / avail-outstock
+  #product-availability-text → "In Stock" or "Out of Stock"
+  #product-description       → product.description
+
+  ── STEP 8: Gallery ─────────────────────────────────────────
+  #gallery-main-img          → src="assets/images/products/{product.images[0]}"
+                               alt="{product.name}"
+  #gallery-thumbs            → inject <button class="thumb-btn"> per image
+    Each button:
+      data-src="assets/images/products/{img}"
+      aria-label="View image {n+1} of {product.name}"
+      aria-pressed="true" (first one)
+    Click handler:
+      1. Set #gallery-main-img src to clicked image (with brief opacity fade)
+      2. Toggle .is-active on thumb buttons
+      3. Update aria-pressed
+
+  ── STEP 9: Sizes ───────────────────────────────────────────
+  If product.sizes exists and length > 0:
+    Show #size-section
+    Inject per size:
+      <button class="size-btn" aria-pressed="false" data-size="S">S</button>
+    First size gets .is-selected + aria-pressed="true" by default
+    Click: single selection, update class + aria-pressed
+
+  ── STEP 10: Colors ─────────────────────────────────────────
+  If product.colors exists and length > 0:
+    Show #color-section
+    Inject per color:
+      <button class="color-btn" aria-pressed="false" data-color="Black">
+        <span class="color-swatch" style="background: {cssColor};" aria-hidden="true"></span>
+        Black
+      </button>
+    First color gets .is-selected + aria-pressed="true" by default
+    Click: single selection, update class + aria-pressed
+
+    Color name → CSS color mapping (extend as needed):
+    { black:'#1a1a1a', white:'#f5f5f5', blue:'#2563eb', red:'#dc2626',
+      green:'#16a34a', grey:'#6b7280', gray:'#6b7280', navy:'#1e3a5f',
+      brown:'#78350f', yellow:'#ca8a04', pink:'#db2777', purple:'#7c3aed' }
+
+  ── STEP 11: WhatsApp CTA ───────────────────────────────────
+  Build message dynamically, update whenever size/color selection changes.
+
+  const selectedSize  = /* currently selected size or '' */;
+  const selectedColor = /* currently selected color or '' */;
+
+  let msg = `Hi, I'm interested in ${product.name} (₹${product.price}).`;
+  if (selectedSize)  msg += `\nSize: ${selectedSize}`;
+  if (selectedColor) msg += `\nColor: ${selectedColor}`;
+  msg += `\nIs this available?`;
+
+  const WHATSAPP_NUMBER = '91XXXXXXXXXX'; // ← REPLACE with real number
+  const encoded = encodeURIComponent(msg);
+  document.getElementById('btn-whatsapp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+
+  ── STEP 12: Call button ────────────────────────────────────
+  const STORE_PHONE = '+91XXXXXXXXXX'; // ← REPLACE with real number
+  document.getElementById('btn-call').href = `tel:${STORE_PHONE}`;
+
+  ── STEP 13: Specifications table ───────────────────────────
+  Spec fields to check (skip if undefined/null/empty):
+    material, fit, gender, occasion, category (display name), availability
+
+  Show #spec-section if at least one spec exists.
+  Inject into #spec-tbody:
+    <tr><th scope="row">Material</th><td>100% Cotton</td></tr>
+
+  ── STEP 14: Related products ───────────────────────────────
+  1. Filter: same category, exclude current product.id
+  2. Take up to 4 products (prefer featured ones first).
+  3. If 0 related: inject <p class="related-empty">No related products found.</p>
+  4. Update #related-browse-link href → categories.html?category={slug}
+  5. Inject card markup into #related-grid (role="listitem" on each article).
+
+  Card structure:
+  <article class="product-card" role="listitem">
+    <div class="card-image-wrap">
+      [if featured] <div class="card-badge">Featured</div>
+      <img src="assets/images/products/{img}" alt="{name}" loading="lazy" />
+    </div>
+    <div class="card-body">
+      <div class="card-category">{categoryDisplayName}</div>
+      <h3 class="card-name">{name}</h3>
+      <div class="card-price"><sup>₹</sup>{price}</div>
+      <a class="btn-view-details" href="product.html?id={id}">View Details</a>
+    </div>
+  </article>
+
+  ── STEP 15: Invalid / missing ID ───────────────────────────
+  If productId is null:
+    #state-not-found-desc.textContent = "Please select a product from our collection."
+  If productId is set but not found in data:
+    #state-not-found-desc.textContent = "Sorry, we couldn't find the product you're looking for."
+  In both cases:
+    hide #product-loading, #product-detail-wrap
+    show #state-not-found
+
+  ── CONSTANTS (replace before deploying) ────────────────────
+  const WHATSAPP_NUMBER = '91XXXXXXXXXX'; // e.g. '919876543210'
+  const STORE_PHONE     = '+91XXXXXXXXXX'; // e.g. '+919876543210'
+
+  ═══════════════════════════════════════════════════════════════
+  -->
+
+</body>
+</html>
